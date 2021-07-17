@@ -165,3 +165,17 @@ func TestPop(t *testing.T) {
 	}
 
 }
+
+func TestRange(t *testing.T) {
+	l := List("", 1, 2, 3)
+
+	l.Range(func(idx int, val interface{}) {
+		fmt.Println(val)
+	})
+
+	l.Range(func(idx int, val interface{}) {
+		if _, ok := val.(int); ok && val == 1 {
+			fmt.Println(val)
+		}
+	})
+}

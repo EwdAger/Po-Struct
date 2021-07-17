@@ -22,6 +22,7 @@ type Lists interface {
 	AsArray() []interface{}
 	Pop(index int) (interface{}, error)
 	Clear()
+	Range(func(idx int, val interface{}))
 }
 
 func List(types string, items ...interface{}) (res Lists) {

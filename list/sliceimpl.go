@@ -218,6 +218,12 @@ func (l sliceImpl) Sort() ([]interface{}, error) {
 	panic("implement me")
 }
 
+func (l *sliceImpl) Range(fun func(idx int, val interface{})) {
+	for idx, val := range l.items {
+		fun(idx, val)
+	}
+}
+
 // 判断是否需要扩容
 // nums 为本次扩容需要添加的元素个数
 func needGrow(l *sliceImpl, nums int) bool {

@@ -27,7 +27,22 @@
 - [x] `Reverse()`倒转
 - [x] `Pop()`尾部出栈，删除指定位置元素
 - [x] `Clear()`清空
+- [x] `Range()` 接受一个方法，遍历
 - [ ] `Sort()`排序
+
+# set
+
+- [x] `Srting()`序列化
+- [x] `Size()`获取长度
+- [x] `Copy()`拷贝
+- [x] `IsSubSet()`判断子集
+- [x] `IsSuperSet()`判断超集
+- [x] `Equal()`判断相等
+- [x] `Union()`返回并集
+- [x] `Difference()`返回差集
+- [x] `Intersection()`返回交集
+- [x] `Range()` 接受一个方法，遍历
+
 
 ## float
 
