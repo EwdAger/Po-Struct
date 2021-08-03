@@ -41,7 +41,7 @@ func (h *hashSet) Contains(val ...interface{}) bool {
 }
 
 func (h *hashSet) Values() (res []interface{}) {
-	for k, _ := range h.items {
+	for k := range h.items {
 		res = append(res, k)
 	}
 
@@ -56,7 +56,7 @@ func (h hashSet) String() string {
 	strSli := make([]string, h.Len())
 	i := 0
 
-	for k, _ := range h.items {
+	for k := range h.items {
 		strSli[i] = fmt.Sprintf("%v", k)
 		i += 1
 	}
@@ -68,7 +68,7 @@ func (h hashSet) String() string {
 func (h *hashSet) Copy() *hashSet {
 	newMap := make(map[interface{}]struct{}, h.Len())
 
-	for k, _ := range h.items {
+	for k := range h.items {
 		newMap[k] = struct{}{}
 	}
 
@@ -103,7 +103,7 @@ func (h *hashSet) Intersection(b *hashSet) *hashSet {
 }
 
 func (h *hashSet) Range(fun func(key interface{})) {
-	for key, _ := range h.items {
+	for key := range h.items {
 		fun(key)
 	}
 }
@@ -119,7 +119,7 @@ func Equal(a *hashSet, b *hashSet) bool {
 
 // IsSubSet a 是否为 b 子集，即 a 中元素是否都在 b 中， b >= a
 func IsSubSet(a *hashSet, b *hashSet) bool {
-	for k, _ := range a.items {
+	for k := range a.items {
 		if _, ok := b.items[k]; !ok {
 			return false
 		}
@@ -136,7 +136,7 @@ func IsSuperSet(a *hashSet, b *hashSet) bool {
 func Union(a *hashSet, b *hashSet) *hashSet {
 	newSet := a.Copy()
 
-	for k, _ := range b.items {
+	for k := range b.items {
 		newSet.items[k] = struct{}{}
 	}
 	return newSet
@@ -146,7 +146,7 @@ func Union(a *hashSet, b *hashSet) *hashSet {
 func Difference(a *hashSet, b *hashSet) *hashSet {
 	newSet := a.Copy()
 
-	for k, _ := range b.items {
+	for k := range b.items {
 		if _, ok := newSet.items[k]; ok {
 			delete(newSet.items, k)
 		}
@@ -159,13 +159,13 @@ func Difference(a *hashSet, b *hashSet) *hashSet {
 func Intersection(a *hashSet, b *hashSet) *hashSet {
 	newSet := a.Copy()
 
-	for k, _ := range b.items {
+	for k := range b.items {
 		if _, ok := newSet.items[k]; !ok {
 			delete(newSet.items, k)
 		}
 	}
 
-	for k, _ := range newSet.items {
+	for k := range newSet.items {
 		if _, ok := b.items[k]; !ok {
 			delete(newSet.items, k)
 		}
