@@ -17,18 +17,16 @@ func assertListImplementation() {
 	var _ list.Lists = &SliceList{}
 }
 
-func New(items ...interface{}) (res list.Lists) {
+func New(items ...interface{}) (res *SliceList) {
 	res = &SliceList{}
-	res.Init(items...)
+	if len(items) > 0 {
+		res.items = items
+	}
 	return res
 }
 
 type SliceList struct {
 	items []interface{}
-}
-
-func (l *SliceList) Init(values ...interface{}) {
-	l.items = values
 }
 
 func (l SliceList) Size() int {

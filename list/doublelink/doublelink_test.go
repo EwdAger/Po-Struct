@@ -1,12 +1,11 @@
-// @Title  sliceimpl_test
+// @Title  doublelink_test
 // @Description
 // @Author  EwdAger
-// @Update  2021/7/15 20:48
+// @Update  2021/8/3 14:26
 
-package slicelist
+package doublelink
 
 import (
-	"Po-Struct/list"
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -16,13 +15,20 @@ func TestNewAndString(t *testing.T) {
 	l := New("abc", 123, "def")
 	assert.Equal(t, fmt.Sprint(l), "[abc, 123, def]")
 
-	l2 := New("")
+	l2 := New()
 	assert.Equal(t, fmt.Sprint(l2), "[]")
+
+	l3 := New(1)
+	assert.Equal(t, fmt.Sprint(l3), "[1]")
+
 }
 
 func TestSizes(t *testing.T) {
 	l := New("abc", 123, "def")
 	assert.Equal(t, l.Size(), 3)
+
+	l2 := New()
+	assert.Equal(t, l2.Size(), 0)
 }
 
 func TestGetItem(t *testing.T) {
@@ -51,82 +57,31 @@ func TestGetItem(t *testing.T) {
 	}
 }
 
-func TestEqual(t *testing.T) {
-	l1 := New("abc", 123, "def")
-	l2 := New("abc", 123, "def")
-
-	assert.Equal(t, list.Equal(l1, l2), true)
-
-}
-
-func TestIs(t *testing.T) {
-	l1 := New("abc", 123, "def")
-	l2 := New("abc", 123, "def")
-
-	assert.Equal(t, list.Is(&l1, &l2), false)
-	assert.Equal(t, list.Is(&l1, &l1), true)
-}
-
-func TestAppend(t *testing.T) {
+func TestSetItem(t *testing.T) {
 	l := New("abc", 123, "def")
-	l.Append(10)
 
-	assert.Equal(t, l.Cap(), 7)
-
-	l2 := New(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-	l2.Append(11)
-	assert.Equal(t, l2.Cap(), 18)
-
-	l3 := New(1)
-	l3.Append(2, 3, 4, 5, 6)
-	assert.Equal(t, l3.Cap(), 9)
+	if assert.Nil(t, l.SetItem(1, 456)) {
+		v, _ := l.GetItem(1)
+		assert.Equal(t, v, 456)
+	}
+	assert.NotNil(t, l.SetItem(4, 456))
 }
 
 func TestInsert(t *testing.T) {
-	l := New(1, 2, 4)
+	l := New("abc", 123, "def")
 
-	l.Insert(2, 3)
-	assert.Equal(t, fmt.Sprint(l), "[1, 2, 3, 4]")
+	l.Insert(0, "a")
+	assert.Equal(t, fmt.Sprint(l), "[a, abc, 123, def]")
 
-	l.Insert(0, 0)
-	assert.Equal(t, fmt.Sprint(l), "[0, 1, 2, 3, 4]")
+	l.Insert(1, "b")
+	assert.Equal(t, fmt.Sprint(l), "[a, b, abc, 123, def]")
 
-	l.Insert(-1, 5)
-	assert.Equal(t, fmt.Sprint(l), "[0, 1, 2, 3, 4, 5]")
+	l.Insert(-1, "g")
+	assert.Equal(t, fmt.Sprint(l), "[a, b, abc, 123, def, g]")
 
-	l.Insert(-6, -1)
-	assert.Equal(t, fmt.Sprint(l), "[-1, 0, 1, 2, 3, 4, 5]")
+	l.Insert(10, "h")
+	assert.Equal(t, fmt.Sprint(l), "[a, b, abc, 123, def, g, h]")
 
-	l.Insert(100, 6)
-	assert.Equal(t, fmt.Sprint(l), "[-1, 0, 1, 2, 3, 4, 5, 6]")
-
-	l.Insert(-100, -2)
-	assert.Equal(t, fmt.Sprint(l), "[-2, -1, 0, 1, 2, 3, 4, 5, 6]")
-}
-
-func TestGetSlice(t *testing.T) {
-	l := New(1, 2, 3)
-
-	l2 := l.GetSlice(0, l.Size())
-	assert.Equal(t, fmt.Sprint(l2), "[1, 2, 3]")
-
-	l3 := l.GetSlice(1, l.Size())
-	assert.Equal(t, fmt.Sprint(l3), "[2, 3]")
-
-	l4 := l.GetSlice(1, 2)
-	assert.Equal(t, fmt.Sprint(l4), "[2]")
-
-	l5 := l.GetSlice(0, -1)
-	assert.Equal(t, fmt.Sprint(l5), "[1, 2]")
-
-	l6 := l.GetSlice(-3, -2)
-	assert.Equal(t, fmt.Sprint(l6), "[1]")
-
-	l7 := l.GetSlice(4, 6)
-	assert.Equal(t, fmt.Sprint(l7), "[]")
-
-	l8 := l.GetSlice(4, 0)
-	assert.Equal(t, fmt.Sprint(l8), "[]")
 }
 
 func TestExtend(t *testing.T) {
@@ -136,7 +91,6 @@ func TestExtend(t *testing.T) {
 
 	if err := l1.Extend(l2); assert.Nil(t, err) {
 		assert.Equal(t, fmt.Sprint(l1), "[1, 2, 3, 4, 5, 6]")
-		assert.Equal(t, l1.Cap(), 9)
 	}
 
 	if err := l1.Extend(l3); assert.NotNil(t, err) {
@@ -146,9 +100,9 @@ func TestExtend(t *testing.T) {
 
 func TestReverse(t *testing.T) {
 	l1 := New(1, 2, 3)
-
 	l1.Reverse()
 	assert.Equal(t, fmt.Sprint(l1), "[3, 2, 1]")
+
 }
 
 func TestPop(t *testing.T) {

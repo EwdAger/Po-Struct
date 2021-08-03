@@ -7,15 +7,12 @@
 package list
 
 type Lists interface {
-	Init(val ...interface{})
 	String() string
 	Size() int
-	Cap() int
 	GetItem(index int) (interface{}, error)
 	SetItem(index int, val interface{}) error
 	Append(val ...interface{})
 	Insert(index int, val interface{})
-	GetSlice(left int, right int) interface{}
 	Extend(b interface{}) error
 	Sort() ([]interface{}, error)
 	Reverse()
@@ -25,15 +22,15 @@ type Lists interface {
 	Range(func(idx int, val interface{}))
 }
 
-func Equal(a Lists, b Lists) bool {
+func Equal(a interface{}, b interface{}) bool {
 
-	if a.Size() != b.Size() {
+	if a.(Lists).Size() != b.(Lists).Size() {
 		return false
 	}
 
-	for i := 0; i < a.Size(); i++ {
-		left, _ := a.GetItem(i)
-		right, _ := b.GetItem(i)
+	for i := 0; i < a.(Lists).Size(); i++ {
+		left, _ := a.(Lists).GetItem(i)
+		right, _ := b.(Lists).GetItem(i)
 		if left != right {
 			return false
 		}
@@ -42,6 +39,6 @@ func Equal(a Lists, b Lists) bool {
 	return true
 }
 
-func Is(a *Lists, b *Lists) bool {
+func Is(a interface{}, b interface{}) bool {
 	return a == b
 }
