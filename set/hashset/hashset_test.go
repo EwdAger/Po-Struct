@@ -3,7 +3,7 @@
 // @Author  EwdAger
 // @Update  2021/7/17 13:42
 
-package set
+package hashset
 
 import (
 	"fmt"
@@ -11,14 +11,27 @@ import (
 	"testing"
 )
 
+func TestContains(t *testing.T) {
+	a := New("a", "b", "c", 1, 2, 3)
+	assert.Equal(t, a.Contains(1, 2, 3), true)
+	assert.Equal(t, a.Contains(1, 2, 3, 4), false)
+
+}
+
+func TestValues(t *testing.T) {
+	a := New("a", "b", "c", 1, 2, 3)
+	fmt.Println(a.Values())
+	assert.Equal(t, a.Contains(a.Values()...), true)
+}
+
 func TestInit(t *testing.T) {
-	s := Set("a", "b", "c", 1, 2, 3)
+	s := New("a", "b", "c", 1, 2, 3)
 	assert.Equal(t, Equal(s, s), true)
 }
 
 func TestSubAndSuper(t *testing.T) {
-	a := Set("a", "b", "c", 1, 2, 3)
-	b := Set(1, 3)
+	a := New("a", "b", "c", 1, 2, 3)
+	b := New(1, 3)
 
 	assert.Equal(t, IsSubSet(b, a), true)
 	assert.Equal(t, IsSuperSet(a, b), true)
@@ -28,8 +41,8 @@ func TestSubAndSuper(t *testing.T) {
 }
 
 func TestUnion(t *testing.T) {
-	a := Set("a", "b", "c", 1, 2, 3)
-	b := Set(1, 3)
+	a := New("a", "b", "c", 1, 2, 3)
+	b := New(1, 3)
 
 	assert.Equal(t, Equal(Union(a, b), a), true)
 	assert.Equal(t, Equal(a.Union(b), a), true)
@@ -37,9 +50,9 @@ func TestUnion(t *testing.T) {
 }
 
 func TestDifference(t *testing.T) {
-	a := Set("a", "b", "c", 1, 2, 3)
-	b := Set(1, 2, 3)
-	c := Set("a", "b", "c")
+	a := New("a", "b", "c", 1, 2, 3)
+	b := New(1, 2, 3)
+	c := New("a", "b", "c")
 
 	assert.Equal(t, Equal(Difference(a, b), c), true)
 	assert.Equal(t, Equal(a.Difference(b), c), true)
@@ -47,8 +60,8 @@ func TestDifference(t *testing.T) {
 }
 
 func TestIntersection(t *testing.T) {
-	a := Set("a", "b", "c", 1, 2, 3)
-	b := Set(1, 2, 3)
+	a := New("a", "b", "c", 1, 2, 3)
+	b := New(1, 2, 3)
 
 	assert.Equal(t, Equal(Intersection(a, b), b), true)
 	assert.Equal(t, b.Equal(a.Intersection(b)), true)
@@ -56,7 +69,7 @@ func TestIntersection(t *testing.T) {
 }
 
 func TestRange(t *testing.T) {
-	a := Set("a", "b", "c", 1, 2, 3)
+	a := New("a", "b", "c", 1, 2, 3)
 
 	a.Range(func(key interface{}) {
 		fmt.Println(key)

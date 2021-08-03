@@ -25,16 +25,6 @@ type Lists interface {
 	Range(func(idx int, val interface{}))
 }
 
-func List(types string, items ...interface{}) (res Lists) {
-	if types == "" || types == "slice" {
-		res = &sliceImpl{}
-	} else {
-		panic("// TODO")
-	}
-	res.Init(items...)
-	return res
-}
-
 func Equal(a Lists, b Lists) bool {
 
 	if a.Size() != b.Size() {

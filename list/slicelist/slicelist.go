@@ -3,33 +3,45 @@
 // @Author  EwdAger
 // @Update  2021/7/6 13:14
 
-package list
+package slicelist
 
 import (
+	"Po-Struct/list"
 	"errors"
 	"fmt"
 	"strings"
 )
 
-type sliceImpl struct {
+// 检查是否 implemented
+func assertListImplementation() {
+	var _ list.Lists = &SliceList{}
+}
+
+func New(items ...interface{}) (res list.Lists) {
+	res = &SliceList{}
+	res.Init(items...)
+	return res
+}
+
+type SliceList struct {
 	items []interface{}
 }
 
-func (l *sliceImpl) Init(values ...interface{}) {
+func (l *SliceList) Init(values ...interface{}) {
 	l.items = values
 }
 
-func (l sliceImpl) Size() int {
+func (l SliceList) Size() int {
 	return len(l.items)
 
 }
 
-func (l sliceImpl) Cap() int {
+func (l SliceList) Cap() int {
 	return cap(l.items)
 
 }
 
-func (l sliceImpl) String() string {
+func (l SliceList) String() string {
 	strSli := make([]string, l.Size())
 
 	for i, v := range l.items {
@@ -40,54 +52,36 @@ func (l sliceImpl) String() string {
 	return fmt.Sprintf("[%s]", res)
 }
 
-func (l sliceImpl) GetItem(index int) (interface{}, error) {
-	if index == 0 {
-		return l.items[0], nil
-	}
+func (l SliceList) GetItem(index int) (interface{}, error) {
 
 	// 倒叙索引 feature
-	reverseIndex := false
-
 	if index < 0 {
-		index = -index
-		reverseIndex = true
+		index = l.Size() + index
 	}
 
-	if index >= l.Size() && reverseIndex == false || index > l.Size() && reverseIndex == true {
+	if index >= l.Size() || index < 0 {
 		return nil, errors.New("list index out of range")
 	}
 
-	if reverseIndex == true {
-		return l.items[l.Size()-index], nil
-	} else {
-		return l.items[index], nil
-	}
-
+	return l.items[index], nil
 }
 
-func (l *sliceImpl) SetItem(index int, val interface{}) error {
-	// 倒叙索引 feature
-	reverseIndex := false
+func (l *SliceList) SetItem(index int, val interface{}) error {
 
+	// 倒叙索引 feature
 	if index < 0 {
-		index = -index
-		reverseIndex = true
+		index = l.Size() + index
 	}
 
-	if index >= l.Size() && reverseIndex == false || index > l.Size() && reverseIndex == true {
+	if index >= l.Size() || index < 0 {
 		return errors.New("list index out of range")
 	}
 
-	if reverseIndex == true {
-		l.items[l.Size()-index] = val
-	} else {
-		l.items[index] = val
-	}
+	l.items[index] = val
 	return nil
-
 }
 
-func (l *sliceImpl) Append(val ...interface{}) {
+func (l *SliceList) Append(val ...interface{}) {
 	if need := needGrow(l, len(val)); need == true {
 		err := grow(l, len(val))
 		if err != nil {
@@ -100,7 +94,7 @@ func (l *sliceImpl) Append(val ...interface{}) {
 }
 
 // Insert 支持倒叙索引插入；支持越界索引插入
-func (l *sliceImpl) Insert(index int, val interface{}) {
+func (l *SliceList) Insert(index int, val interface{}) {
 	if need := needGrow(l, 1); need == true {
 		err := grow(l, 1)
 		if err != nil {
@@ -121,15 +115,15 @@ func (l *sliceImpl) Insert(index int, val interface{}) {
 }
 
 // GetSlice 遵循 Slice 子切片规则，左闭右开；支持倒叙索引；支持越界索引
-func (l sliceImpl) GetSlice(left int, right int) interface{} {
+func (l SliceList) GetSlice(left int, right int) interface{} {
 
 	if left > right && right >= 0 {
-		return &sliceImpl{}
+		return &SliceList{}
 	}
 
 	// 处理 left 和 right 越界的情况
 	if left >= l.Size() {
-		return &sliceImpl{}
+		return &SliceList{}
 	} else if left < 0 && -left >= l.Size() {
 		left = 0
 	} else if left < 0 {
@@ -139,19 +133,19 @@ func (l sliceImpl) GetSlice(left int, right int) interface{} {
 	if right > l.Size() || right == 0 {
 		right = l.Size()
 	} else if right < 0 && -right >= l.Size() {
-		return &sliceImpl{}
+		return &SliceList{}
 	} else if right < 0 {
 		right = l.Size() + right
 	}
-	res := &sliceImpl{l.items[left:right]}
+	res := &SliceList{l.items[left:right]}
 
 	return res
 
 }
 
-func (l *sliceImpl) Extend(b interface{}) error {
+func (l *SliceList) Extend(b interface{}) error {
 
-	sli2, ok := b.(*sliceImpl)
+	sli2, ok := b.(*SliceList)
 	if ok != true {
 		return errors.New("List can't concat non-list type objects\n")
 	}
@@ -162,7 +156,7 @@ func (l *sliceImpl) Extend(b interface{}) error {
 	return nil
 }
 
-func (l *sliceImpl) Reverse() {
+func (l *SliceList) Reverse() {
 	left, right := 0, l.Size()-1
 
 	for left < right {
@@ -178,12 +172,12 @@ func (l *sliceImpl) Reverse() {
 }
 
 // AsArray 没办法直接转换数组，目前只能返回 slice
-func (l sliceImpl) AsArray() []interface{} {
+func (l SliceList) AsArray() []interface{} {
 	return l.items
 
 }
 
-func (l *sliceImpl) Pop(index int) (interface{}, error) {
+func (l *SliceList) Pop(index int) (interface{}, error) {
 
 	popItem, err := l.GetItem(index)
 	if err != nil {
@@ -207,18 +201,18 @@ func (l *sliceImpl) Pop(index int) (interface{}, error) {
 
 }
 
-func (l *sliceImpl) Clear() {
+func (l *SliceList) Clear() {
 	var newSli []interface{}
 	l.items = newSli
 
 }
 
 // Sort 没有泛型排序是真的不好写
-func (l sliceImpl) Sort() ([]interface{}, error) {
+func (l SliceList) Sort() ([]interface{}, error) {
 	panic("implement me")
 }
 
-func (l *sliceImpl) Range(fun func(idx int, val interface{})) {
+func (l *SliceList) Range(fun func(idx int, val interface{})) {
 	for idx, val := range l.items {
 		fun(idx, val)
 	}
@@ -226,13 +220,13 @@ func (l *sliceImpl) Range(fun func(idx int, val interface{})) {
 
 // 判断是否需要扩容
 // nums 为本次扩容需要添加的元素个数
-func needGrow(l *sliceImpl, nums int) bool {
+func needGrow(l *SliceList, nums int) bool {
 	return len(l.items)+nums > cap(l.items)
 }
 
 // 每次扩容扩大 1/8 再加上 3 或 6 的余量
 // nums 为本次扩容需要添加的元素个数
-func grow(l *sliceImpl, nums int) error {
+func grow(l *SliceList, nums int) error {
 	nowCap := cap(l.items)
 
 	// 扩容的余量，防止容量很小时频繁扩容, 至于为啥是 3 和 6，这里直接抄了 Python 的源码
@@ -255,7 +249,7 @@ func grow(l *sliceImpl, nums int) error {
 }
 
 // 具体插入到某一位置的逻辑，index 为正数且小于 slice 的长度
-func insertLocation(l *sliceImpl, index int, val interface{}) {
+func insertLocation(l *SliceList, index int, val interface{}) {
 	l.Append(struct{}{})
 
 	var tmp interface{}
