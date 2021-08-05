@@ -19,4 +19,4 @@ jobs:
          # Can pass --config flag to change golangci-lint behavior and target
          # directory.
          golangci_lint_flags: '--tests=false --timeout=10m --exclude-use-default=false'
-         workdir: pkg
+         # workdir: pkg
