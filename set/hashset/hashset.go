@@ -13,11 +13,12 @@ import (
 
 // 检查是否 implemented
 func assertListImplementation() {
-	var _ set.Set = &hashSet{}
+	var _ set.Set = &HashSet{}
 }
 
-func New(val ...interface{}) *hashSet {
-	h := &hashSet{}
+// New 初始化一个新的 Set
+func New(val ...interface{}) *HashSet {
+	h := &HashSet{}
 	h.items = make(map[interface{}]struct{}, len(val))
 
 	for _, v := range val {
@@ -27,11 +28,12 @@ func New(val ...interface{}) *hashSet {
 	return h
 }
 
-type hashSet struct {
+type HashSet struct {
 	items map[interface{}]struct{}
 }
 
-func (h *hashSet) Contains(val ...interface{}) bool {
+// Contains 当前 Set 是否包含 value
+func (h *HashSet) Contains(val ...interface{}) bool {
 	for _, k := range val {
 		if _, ok := h.items[k]; !ok {
 			return false
@@ -40,7 +42,8 @@ func (h *hashSet) Contains(val ...interface{}) bool {
 	return true
 }
 
-func (h *hashSet) Values() (res []interface{}) {
+// Values 将当前 Set 中的所有元素以切片的形式返回
+func (h *HashSet) Values() (res []interface{}) {
 	for k := range h.items {
 		res = append(res, k)
 	}
@@ -48,69 +51,79 @@ func (h *hashSet) Values() (res []interface{}) {
 	return res
 }
 
-func (h hashSet) Len() int {
+// Size 返回大小
+func (h HashSet) Size() int {
 	return len(h.items)
 }
 
-func (h hashSet) String() string {
-	strSli := make([]string, h.Len())
+// String 序列化
+func (h HashSet) String() string {
+	strSli := make([]string, h.Size())
 	i := 0
 
 	for k := range h.items {
 		strSli[i] = fmt.Sprintf("%v", k)
-		i += 1
+		i++
 	}
 
 	res := strings.Join(strSli, ", ")
 	return fmt.Sprintf("{%s}", res)
 }
 
-func (h *hashSet) Copy() *hashSet {
-	newMap := make(map[interface{}]struct{}, h.Len())
+// Copy 返回一个副本 Set
+func (h *HashSet) Copy() *HashSet {
+	newMap := make(map[interface{}]struct{}, h.Size())
 
 	for k := range h.items {
 		newMap[k] = struct{}{}
 	}
 
-	res := &hashSet{}
+	res := &HashSet{}
 	res.items = newMap
 
 	return res
 }
 
-func (h *hashSet) IsSubSet(b *hashSet) bool {
+// IsSubSet a 是否为 b 子集，即 a 中元素是否都在 b 中， b >= a
+func (h *HashSet) IsSubSet(b *HashSet) bool {
 	return IsSubSet(h, b)
 }
 
-func (h *hashSet) IsSuperSet(b *hashSet) bool {
+// IsSuperSet a 是否为 b 超集，即 b 中元素是否都在 a 中， b <= a
+func (h *HashSet) IsSuperSet(b *HashSet) bool {
 	return IsSuperSet(h, b)
 }
 
-func (h *hashSet) Equal(b *hashSet) bool {
+// Equal a b 长度和元素全部相等
+func (h *HashSet) Equal(b *HashSet) bool {
 	return Equal(h, b)
 }
 
-func (h *hashSet) Union(b *hashSet) *hashSet {
+// Union 并集，返回 a 与 b 并集
+func (h *HashSet) Union(b *HashSet) *HashSet {
 	return Union(h, b)
 }
 
-func (h *hashSet) Difference(b *hashSet) *hashSet {
+// Difference 差集，返回 a 与 b 的差集
+func (h *HashSet) Difference(b *HashSet) *HashSet {
 	return Difference(h, b)
 }
 
-func (h *hashSet) Intersection(b *hashSet) *hashSet {
+// Intersection 交集，返回 a 与 b 的交集
+func (h *HashSet) Intersection(b *HashSet) *HashSet {
 	return Intersection(h, b)
 }
 
-func (h *hashSet) Range(fun func(key interface{})) {
+// Range 使用传入的 func 遍历当前 Set
+func (h *HashSet) Range(fun func(key interface{})) {
 	for key := range h.items {
 		fun(key)
 	}
 }
 
 // Equal a b 长度和元素全部相等
-func Equal(a *hashSet, b *hashSet) bool {
-	if a.Len() != b.Len() || !IsSubSet(a, b) {
+func Equal(a *HashSet, b *HashSet) bool {
+	if a.Size() != b.Size() || !IsSubSet(a, b) {
 		return false
 	}
 
@@ -118,7 +131,7 @@ func Equal(a *hashSet, b *hashSet) bool {
 }
 
 // IsSubSet a 是否为 b 子集，即 a 中元素是否都在 b 中， b >= a
-func IsSubSet(a *hashSet, b *hashSet) bool {
+func IsSubSet(a *HashSet, b *HashSet) bool {
 	for k := range a.items {
 		if _, ok := b.items[k]; !ok {
 			return false
@@ -128,12 +141,12 @@ func IsSubSet(a *hashSet, b *hashSet) bool {
 }
 
 // IsSuperSet a 是否为 b 超集，即 b 中元素是否都在 a 中， b <= a
-func IsSuperSet(a *hashSet, b *hashSet) bool {
+func IsSuperSet(a *HashSet, b *HashSet) bool {
 	return IsSubSet(b, a)
 }
 
 // Union 并集，返回 a 与 b 并集
-func Union(a *hashSet, b *hashSet) *hashSet {
+func Union(a *HashSet, b *HashSet) *HashSet {
 	newSet := a.Copy()
 
 	for k := range b.items {
@@ -143,7 +156,7 @@ func Union(a *hashSet, b *hashSet) *hashSet {
 }
 
 // Difference 差集，返回 a 与 b 的差集
-func Difference(a *hashSet, b *hashSet) *hashSet {
+func Difference(a *HashSet, b *HashSet) *HashSet {
 	newSet := a.Copy()
 
 	for k := range b.items {
@@ -156,7 +169,7 @@ func Difference(a *hashSet, b *hashSet) *hashSet {
 }
 
 // Intersection 交集，返回 a 与 b 的交集
-func Intersection(a *hashSet, b *hashSet) *hashSet {
+func Intersection(a *HashSet, b *HashSet) *HashSet {
 	newSet := a.Copy()
 
 	for k := range b.items {

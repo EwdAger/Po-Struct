@@ -65,6 +65,7 @@ func TestSetItem(t *testing.T) {
 		assert.Equal(t, v, 456)
 	}
 	assert.NotNil(t, l.SetItem(4, 456))
+	assert.NotNil(t, l.SetItem(10, 456))
 }
 
 func TestInsert(t *testing.T) {

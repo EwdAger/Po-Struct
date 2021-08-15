@@ -6,7 +6,7 @@
 package set
 
 type Set interface {
-	Len() int
+	Size() int
 	String() string
 	Contains(val ...interface{}) bool
 	Values() []interface{}

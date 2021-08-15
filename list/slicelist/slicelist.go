@@ -17,6 +17,7 @@ func assertListImplementation() {
 	var _ list.Lists = &SliceList{}
 }
 
+// New 初始化一个新的切片列表
 func New(items ...interface{}) (res *SliceList) {
 	res = &SliceList{}
 	if len(items) > 0 {
@@ -29,16 +30,19 @@ type SliceList struct {
 	items []interface{}
 }
 
+// Size 返回大小
 func (l SliceList) Size() int {
 	return len(l.items)
 
 }
 
+// Cap 返回容量
 func (l SliceList) Cap() int {
 	return cap(l.items)
 
 }
 
+// String 序列化
 func (l SliceList) String() string {
 	strSli := make([]string, l.Size())
 
@@ -50,6 +54,7 @@ func (l SliceList) String() string {
 	return fmt.Sprintf("[%s]", res)
 }
 
+// GetItem 获取具体 index 的 value，支持倒叙索引，不允许越界
 func (l SliceList) GetItem(index int) (interface{}, error) {
 
 	// 倒叙索引 feature
@@ -64,6 +69,7 @@ func (l SliceList) GetItem(index int) (interface{}, error) {
 	return l.items[index], nil
 }
 
+// SetItem 修改具体 index 的 value，支持倒叙索引，不允许越界
 func (l *SliceList) SetItem(index int, val interface{}) error {
 
 	// 倒叙索引 feature
@@ -79,6 +85,7 @@ func (l *SliceList) SetItem(index int, val interface{}) error {
 	return nil
 }
 
+// Append 在尾部追加
 func (l *SliceList) Append(val ...interface{}) {
 	if need := needGrow(l, len(val)); need == true {
 		err := grow(l, len(val))
@@ -141,6 +148,7 @@ func (l SliceList) GetSlice(left int, right int) interface{} {
 
 }
 
+// Extend 在当前 切片列表 后连接一个新的 切片列表
 func (l *SliceList) Extend(b interface{}) error {
 
 	sli2, ok := b.(*SliceList)
@@ -154,6 +162,7 @@ func (l *SliceList) Extend(b interface{}) error {
 	return nil
 }
 
+// Reverse 将当前 切片列表 反转
 func (l *SliceList) Reverse() {
 	left, right := 0, l.Size()-1
 
@@ -175,6 +184,7 @@ func (l SliceList) AsArray() []interface{} {
 
 }
 
+// Pop 删除并返回某个 index 位置的值
 func (l *SliceList) Pop(index int) (interface{}, error) {
 
 	popItem, err := l.GetItem(index)
@@ -199,17 +209,19 @@ func (l *SliceList) Pop(index int) (interface{}, error) {
 
 }
 
+// Clear 清空当前 切片列表
 func (l *SliceList) Clear() {
 	var newSli []interface{}
 	l.items = newSli
 
 }
 
-// Sort 没有泛型排序是真的不好写
+// Sort 排序
 func (l SliceList) Sort() ([]interface{}, error) {
 	panic("implement me")
 }
 
+// Range 使用传入的 func 遍历当前 切片列表
 func (l *SliceList) Range(fun func(idx int, val interface{})) {
 	for idx, val := range l.items {
 		fun(idx, val)

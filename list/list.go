@@ -22,6 +22,7 @@ type Lists interface {
 	Range(func(idx int, val interface{}))
 }
 
+// Equal 判断两个 Lists 是否相等
 func Equal(a interface{}, b interface{}) bool {
 
 	if a.(Lists).Size() != b.(Lists).Size() {
@@ -39,6 +40,7 @@ func Equal(a interface{}, b interface{}) bool {
 	return true
 }
 
+// Is 判断两个 Lists 是否为同一个
 func Is(a interface{}, b interface{}) bool {
 	return a == b
 }

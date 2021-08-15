@@ -16,6 +16,7 @@ func assertListImplementation() {
 	var _ list.Lists = &DLink{}
 }
 
+// New 初始化一个新的双向链表
 func New(val ...interface{}) *DLink {
 	l := &DLink{}
 	if len(val) > 0 {
@@ -36,6 +37,7 @@ type DLink struct {
 	size int
 }
 
+// String 序列化
 func (d DLink) String() string {
 	if d.head == nil {
 		return "[]"
@@ -51,10 +53,12 @@ func (d DLink) String() string {
 	return fmt.Sprintf("[%s]", res)
 }
 
+// Size 返回大小
 func (d DLink) Size() int {
 	return d.size
 }
 
+// GetItem 获取具体 index 的 value，支持倒叙索引，不允许越界
 func (d DLink) GetItem(index int) (res interface{}, error error) {
 
 	head, err := d.getNodeByIndex(index)
@@ -66,6 +70,7 @@ func (d DLink) GetItem(index int) (res interface{}, error error) {
 
 }
 
+// SetItem 修改具体 index 的 value，支持倒叙索引，不允许越界
 func (d DLink) SetItem(index int, val interface{}) error {
 
 	head, err := d.getNodeByIndex(index)
@@ -78,6 +83,7 @@ func (d DLink) SetItem(index int, val interface{}) error {
 
 }
 
+// Append 在尾部追加
 func (d *DLink) Append(val ...interface{}) {
 	for _, v := range val {
 		elem := &node{val: v, prev: d.tail}
@@ -94,6 +100,7 @@ func (d *DLink) Append(val ...interface{}) {
 	d.tail.next = d.head
 }
 
+// Insert 向某个 index 插入一个 value， 原 value 后移，支持倒叙索引
 func (d *DLink) Insert(index int, val interface{}) {
 	if index >= d.Size() || -index > d.Size() {
 		index = -1
@@ -121,10 +128,11 @@ func (d *DLink) Insert(index int, val interface{}) {
 
 }
 
+// Extend 在当前 DLink 后连接一个新的 DLink
 func (d *DLink) Extend(b interface{}) error {
 	d2, ok := b.(*DLink)
 	if ok != true {
-		return errors.New("DLink can't concat non-DLink type objects\n")
+		return errors.New("DLink can't concat non-DLink type objects")
 	}
 
 	d.tail.next = d2.head
@@ -138,10 +146,12 @@ func (d *DLink) Extend(b interface{}) error {
 
 }
 
+// Sort 排序
 func (d DLink) Sort() ([]interface{}, error) {
 	panic("implement me")
 }
 
+// Reverse 将当前 DLink 反转
 func (d *DLink) Reverse() {
 
 	head := d.head
@@ -154,6 +164,7 @@ func (d *DLink) Reverse() {
 
 }
 
+// AsArray 将当前 DLink 转换为切片
 func (d DLink) AsArray() []interface{} {
 
 	strSli := make([]interface{}, d.Size())
@@ -165,6 +176,7 @@ func (d DLink) AsArray() []interface{} {
 	return strSli
 }
 
+// Pop 删除并返回某个 index 位置的值
 func (d *DLink) Pop(index int) (interface{}, error) {
 	head, err := d.getNodeByIndex(index)
 	if err != nil {
@@ -178,12 +190,14 @@ func (d *DLink) Pop(index int) (interface{}, error) {
 
 }
 
+// Clear 清空当前 DLink
 func (d *DLink) Clear() {
 	d.head = nil
 	d.tail = nil
 	d.size = 0
 }
 
+// Range 使用传入的 func 遍历当前 DLink
 func (d *DLink) Range(f func(idx int, val interface{})) {
 
 	head := d.head
